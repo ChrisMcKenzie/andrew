@@ -1,0 +1,21 @@
+{
+  "name": "slackr",
+  "version": "1.0.0",
+  "description": "slack bot integration for andrew",
+  "main": "index.ts",
+  "scripts": {
+    "start": "npm run build:live",
+    "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./index.ts"
+  },
+  "author": "Chris McKenzie <chris@chrismckenzie.io>",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^6.0.52",
+    "apiai": "^3.0.3",
+    "botkit": "^0.4.5",
+    "nodemon": "^1.11.0",
+    "ts-node": "^1.7.2",
+    "typescript": "^2.1.4"
+  },
+  "devDependencies": {}
+}
