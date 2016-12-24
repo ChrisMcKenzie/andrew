@@ -1,6 +1,8 @@
-FROM alpine
+FROM golang
 
-ADD bin/ /go/bin
+ADD . /go/src/github.com/ChrisMcKenzie/andrew/fulfillment
+
+RUN go install github.com/ChrisMcKenzie/andrew/fulfillment
 
 ENTRYPOINT /go/bin/fulfillment
 
