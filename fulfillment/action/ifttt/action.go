@@ -13,8 +13,8 @@ import (
 var makerTemplate = fmt.Sprintf("http://maker.ifttt.com/trigger/%%s/with/key/%s", os.Getenv("MAKER_TOKEN"))
 
 func init() {
-	action.Register("lights.on", lightsOnHandler)
-	action.Register("lights.off", lightsOffHandler)
+	action.HandleFunc("lights.on", lightsOnHandler)
+	action.HandleFunc("lights.off", lightsOffHandler)
 }
 
 func lightsOnHandler(ctx context.Context, req apiai.WebhookRequest) (*apiai.Fulfillment, error) {
