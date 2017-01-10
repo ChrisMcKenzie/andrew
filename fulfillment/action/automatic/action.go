@@ -42,31 +42,7 @@ type AutomaticHandler struct {
 func NewHandler(access, refresh string, db *bolt.DB) *AutomaticHandler {
 	ah := &AutomaticHandler{&http.Client{}, db, access, refresh}
 
-	err := db.Update(func(tx *bolt.Tx) error {
-		b, err := tx.CreateBucketIfNotExists([]byte("Vehicles"))
-		if err != nil {
-			return fmt.Errorf("create bucket: %s", err)
-		}
-
-		cars, err := ah.getVehicles()
-		if err != nil {
-			return err
-		}
-
-		for _, car := range cars {
-			data, err := json.Marshal(car)
-			if err != nil {
-				return err
-			}
-			err = b.Put([]byte(car.Model), data)
-			if err != nil {
-				return err
-			}
-		}
-
-		return nil
-	})
-
+	err := ah.primeCache()
 	if err != nil {
 		log.Printf("unable to create vehicle list: %s", err)
 	}
@@ -76,6 +52,8 @@ func NewHandler(access, refresh string, db *bolt.DB) *AutomaticHandler {
 
 func (a *AutomaticHandler) Handle(ctx context.Context, r apiai.WebhookRequest) (*apiai.Fulfillment, error) {
 	carName := r.Result.Parameters["car"].(string)
+
+	a.primeCache()
 
 	var car Vehicle
 	err := a.db.View(func(tx *bolt.Tx) error {
@@ -139,6 +117,36 @@ func (a *AutomaticHandler) getVehicle(url string) (*Vehicle, error) {
 	}
 
 	return nil, fmt.Errorf("unable to retrieve vehicle: %s", resp.Status)
+}
+
+func (a *AutomaticHandler) primeCache() error {
+	err := a.db.Update(func(tx *bolt.Tx) error {
+		b, err := tx.CreateBucketIfNotExists([]byte("Vehicles"))
+		if err != nil {
+			return fmt.Errorf("create bucket: %s", err)
+		}
+
+		cars, err := a.getVehicles()
+		if err != nil {
+			return err
+		}
+
+		for _, car := range cars {
+			fmt.Println(car)
+			data, err := json.Marshal(car)
+			if err != nil {
+				return err
+			}
+			err = b.Put([]byte(car.Model), data)
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+
+	return err
 }
 
 func (a *AutomaticHandler) getVehicles() ([]Vehicle, error) {

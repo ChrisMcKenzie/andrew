@@ -11,6 +11,7 @@ import (
 	"github.com/ChrisMcKenzie/andrew/fulfillment/action"
 	"github.com/ChrisMcKenzie/andrew/fulfillment/action/automatic"
 	_ "github.com/ChrisMcKenzie/andrew/fulfillment/action/ifttt"
+	_ "github.com/ChrisMcKenzie/andrew/fulfillment/action/math"
 	"github.com/ChrisMcKenzie/andrew/fulfillment/apiai"
 	"github.com/boltdb/bolt"
 )
